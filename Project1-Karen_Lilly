@@ -1,0 +1,67 @@
+# Name: Karen Lin
+# Student ID: 07134248
+# Email: linkaren@umich.edu
+# Collaborators: Lilly Joelson
+# Karen's Functions:
+
+
+# Name: Lillian Joelson
+# Student ID: 
+# Email: 
+# Collaborators: Karen Lin
+# Lilly's Functions: 
+
+import csv
+import unittest
+
+def load_data(filename):
+    data = []
+    with open(filename) as inFile:
+        reader = csv.DictReader(inFile)
+        next(reader)
+
+        for row in reader:
+            data.append(row)
+    
+    return data
+
+
+
+# Karen: calculate the ratio of avg_bill_length / avg_bill_depth of most popular island
+
+# find most popular island (max_island)
+
+def most_pop_island(data):
+    for penguin in data:
+        print(penguin)
+
+
+# in that island, calculate avg bill length
+
+# in that island, calculate avg bill depth
+
+# divide length by depth for ratio
+
+
+# max_island_count
+# ISLAND
+# avg_bill_length
+# BILL LENGTH
+# avg_bill_depth
+# BILL DEPTH
+
+
+penguins_file = load_data("penguins.csv")
+print(penguins_file)
+
+
+
+def main():
+    data = load_data("penguins.csv")
+
+if __name__ == "__main__":
+    main()
+
+
+
+# test cases for the calculation methods
