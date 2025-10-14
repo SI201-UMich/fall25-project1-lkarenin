@@ -61,15 +61,16 @@ def calculate_bill_ratios(data, max_island):
 
     for penguin in data:
         if penguin['island'] == max_island:
+            
             max_island_data.append(penguin)
-            # print(max_island_data)
+            print(max_island_data)
 
             for penguin in max_island_data:
                 print(penguin)
                 total_length += penguin[3]
                 print(total_length)
                 total_depth += penguin[4]
-                print(total_depth)
+    return total_depth
 
     # avg_length = total_length / len()
 
@@ -90,7 +91,7 @@ def main():
     data = load_data("penguins.csv")
 
     most_pop_island = calculate_max_island(data)
-    bill_ratio = calculate_bill_ratios(data, most_pop_island)
+    bill_ratio = calculate_bill_ratios(data,max_island=0)
 
 if __name__ == "__main__":
     main()
