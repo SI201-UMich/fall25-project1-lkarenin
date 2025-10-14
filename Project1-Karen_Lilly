@@ -32,8 +32,12 @@ def load_data(filename):
 # find most popular island (max_island)
 
 def most_pop_island(data):
+    max_island_freq = int('-inf')
+    max_island = ''
     for penguin in data:
-        print(penguin)
+        island = penguin[2]
+        print(island)
+        
 
 
 # in that island, calculate avg bill length
@@ -52,9 +56,7 @@ def most_pop_island(data):
 
 
 penguins_file = load_data("penguins.csv")
-print(penguins_file)
-
-
+# print(penguins_file)
 
 def main():
     data = load_data("penguins.csv")
