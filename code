@@ -31,21 +31,21 @@ def main():
 
 
 # FIX: make it so that the output is a dict w keys of unique species and vals are avgs of male bill lengths
-# def male_bill(penguins_file, species_list):
+def male_bill(penguins_file, species_list):
     
-#     bill_lengths = []
-#     for species_name in species_list:
-#         for row in penguins_file:
-#             if species_name == row["species"] and row["sex"] == "male":
-#                 bill_lengths.append(float(row["bill_lengths_mm"]))
-#                 avg_male_bill = sum(bill_lengths) / len(bill_lengths)
-#                 print(f"(f"Avg male bill length for {species_name}: {avg_male_bill}")")
+    bill_lengths = []
+    for species_name in species_list:
+        for row in penguins_file:
+            if species_name == row["species"] and row["sex"] == "male":
+                bill_lengths.append(float(row["bill_lengths_mm"]))
+                avg_male_bill = sum(bill_lengths) / len(bill_lengths)
+                print(f"(f"Avg male bill length for {species_name}: {avg_male_bill}")")
 
         
 
-#     return avg_male_bill
+    return avg_male_bill
 
-# # output: {adelie: 30, gentoo: 40, chinstrap: 50}
+# output: {adelie: 30, gentoo: 40, chinstrap: 50}
             
     
 
