@@ -1,0 +1,32 @@
+# Name: Karen Lin
+# Student ID: 07134248
+# Email: linkaren@umich.edu
+# Collaborators: Lilly Joelson
+# Karen's Functions:
+
+
+# Name: Lillian Joelson
+# Student ID: 
+# Email: 
+# Collaborators: Karen Lin
+# Lilly's Functions: 
+
+# Karen: calculate the ratio of avg_bill_length / avg_bill_depth of most popular island
+# output: ratios
+# max_island_count
+# ISLAND
+# avg_bill_length
+# BILL LENGTH
+# avg_bill_depth
+# BILL DEPTH
+
+import csv
+
+def main():
+    inFile = open("penguins.csv")
+    penguins_file = csv.DictReader(inFile)
+
+    headers = next(penguins_file)
+    print(penguins_file)
+    return penguins_file
+    
