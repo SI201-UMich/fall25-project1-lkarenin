@@ -29,22 +29,30 @@ def load_data(filename):
 
 # Karen: calculate the ratio of avg_bill_length / avg_bill_depth of most popular island
 
-# find most popular island (max_island)
+# 1. find most popular island (max_island)
 
-def most_pop_island(data):
-    max_island_freq = int('-inf')
-    max_island = ''
+def calculate_max_island(data):
+    island_freqs = {}
+
     for penguin in data:
-        island = penguin[2]
-        print(island)
-        
+        island = penguin['island']
+        if island not in island_freqs:
+            island_freqs[island] = 1
+        else: # the island is in the island list
+            island_freqs[island] += 1 
 
+    max_freq = 0
+    max_island = ''
 
-# in that island, calculate avg bill length
+    for island, freq in island_freqs.items():
+        if freq > max_freq:
+            max_freq = freq
+            max_island = island
+    
+    # print(f'The island in which most penguins reside in is the {max_island} island.')
+    return max_island
 
-# in that island, calculate avg bill depth
-
-# divide length by depth for ratio
+# 2. in that island, calculate avg bill length, avg bill depth, and ratio
 
 
 # max_island_count
@@ -55,11 +63,16 @@ def most_pop_island(data):
 # BILL DEPTH
 
 
-penguins_file = load_data("penguins.csv")
-# print(penguins_file)
+
+
+
+# MAIN
 
 def main():
     data = load_data("penguins.csv")
+
+    most_pop_island = calculate_max_island(data)
+    bill_ratio = calculate_bill_ratios(data, most_pop_island)
 
 if __name__ == "__main__":
     main()
