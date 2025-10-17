@@ -184,16 +184,16 @@ class TestPenguinFunctions(unittest.TestCase):
     def setUp(self):
         # general
         self.general_sample = [
-            {"species": "Adelie", "island": "Torgersen", "bill_length_mm": "39.1", "bill_depth": "18.7", "flipper_length_mm": "181", "body_mass_g": "3750", "sex": "male", "year": "2007"}
-            {"species": "Adelie", "island": "Torgersen", "bill_length_mm": "39.5", "bill_depth": "17.4", "flipper_length_mm": "186", "body_mass_g": "3800", "sex": "female", "year": "2007"}
-            {"species": "Adelie", "island": "Dream", "bill_length_mm": "40.2", "bill_depth": "17.1", "flipper_length_mm": "193", "body_mass_g": "3400", "sex": "female", "year": "2009"}
+            {"species": "Adelie", "island": "Torgersen", "bill_length_mm": "39.1", "bill_depth": "18.7", "flipper_length_mm": "181", "body_mass_g": "3750", "sex": "male", "year": "2007"},
+            {"species": "Adelie", "island": "Torgersen", "bill_length_mm": "39.5", "bill_depth": "17.4", "flipper_length_mm": "186", "body_mass_g": "3800", "sex": "female", "year": "2007"},
+            {"species": "Adelie", "island": "Dream", "bill_length_mm": "40.2", "bill_depth": "17.1", "flipper_length_mm": "193", "body_mass_g": "3400", "sex": "female", "year": "2009"},
             {"species": "Gentoo", "island": "Biscoe", "bill_length_mm": "46.1", "bill_depth": "13.2", "flipper_length_mm": "211", "body_mass_g": "4500", "sex": "female", "year": "2007"}
         ]
         
         # edges
         self.edge_sample = [
-            {"species": "Gentoo", "island": "Biscoe", "bill_length_mm": "NA", "bill_depth": "NA", "flipper_length_mm": "NA", "body_mass_g": "NA", "sex": "NA", "year": "2009"}
-            {"species": "Gentoo", "island": "Dream", "bill_length_mm": "46.5", "bill_depth": "17.9", "flipper_length_mm": "192", "body_mass_g": "3500", "sex": "female", "year": "2007"}
+            {"species": "Gentoo", "island": "Biscoe", "bill_length_mm": "NA", "bill_depth": "NA", "flipper_length_mm": "NA", "body_mass_g": "NA", "sex": "NA", "year": "2009"},
+            {"species": "Gentoo", "island": "Dream", "bill_length_mm": "46.5", "bill_depth": "17.9", "flipper_length_mm": "192", "body_mass_g": "3500", "sex": "female", "year": "2007"},
             {"species": "Chinstrap", "island": "Dream", "bill_length_mm": "50", "bill_depth": "19.2", "flipper_length_mm": "196", "body_mass_g": "3900", "sex": "male", "year": "2007"}
         ]
 
