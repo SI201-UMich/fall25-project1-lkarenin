@@ -8,9 +8,10 @@
 
 # Name: Lillian Joelson
 # Student ID: 70108944
-# Email: ljoelson@u,ich.edu
+# Email: ljoelson@umich.edu
 # Collaborators: Karen Lin
-# Lilly's Functions: 
+# Lilly's Functions: lowest_ratio_2007() and calc_fpercent()
+# GenAI Statement: Used Chat GPT to guide coding process on how to build functions in English and debug code. It also helped be build my Unit Tests by giving me ideas on what to test and guiding how to build the code
 
 import csv
 import unittest
@@ -29,30 +30,35 @@ def load_data(filename):
 # Karen: calculate avg bill length and avg bill depth for each species → calc_avg_bills 
     # output: dict, key is species, value is avg bill length and avg bill depth
 def calc_avg_bills(data):
-    bill_stats = {}  # {species: {bill_length_mm: [], bill_depth_mm: []}}
+    species_bills = {}
 
     for penguin in data:
         species = penguin["species"]
-        try:
-            length = float(penguin["bill_length_mm"])
-            depth = float(penguin["bill_depth_mm"])
-        except ValueError: # skips null rows
+        bill_length = penguin["bill_length_mm"]
+        bill_depth = penguin["bill_depth_mm"]
+
+        # skip NA entries
+        if bill_length == "NA" or bill_depth == "NA":
             continue
 
-        if species not in bill_stats:
-            bill_stats[species] = {"bill_length_mm": [], "bill_depth_mm": []}
+        bill_length = float(bill_length)
+        bill_depth = float(bill_depth)
 
-        bill_stats[species]["bill_length_mm"].append(length)
-        bill_stats[species]["bill_depth_mm"].append(depth)
+        if species not in species_bills:
+            species_bills[species] = {"lengths": [], "depths": []}
+        species_bills[species]["lengths"].append(bill_length)
+        species_bills[species]["depths"].append(bill_depth)
 
-    avg_bills = {}
-    for species, bills in bill_stats.items():
-        avg_length = sum(bills["bill_length_mm"]) / len(bills["bill_length_mm"])
-        avg_depth = sum(bills["bill_depth_mm"]) / len(bills["bill_depth_mm"])
-        avg_bills[species] = {"avg_bill_length_mm": round(avg_length, 2), "avg_bill_depth_mm": round(avg_depth, 2)}
+    avg_dict = {}
+    for species, bills in species_bills.items():
+        avg_length = round(sum(bills["lengths"]) / len(bills["lengths"]), 2)
+        avg_depth = round(sum(bills["depths"]) / len(bills["depths"]), 2)
+        avg_dict[species] = {
+            "avg_bill_length_mm": avg_length,
+            "avg_bill_depth_mm": avg_depth,
+        }
 
-    return avg_bills
-
+    return avg_dict
 
 def calc_max_island_ratios(data):
     # find name of most frequently occurring island
@@ -71,8 +77,6 @@ def calc_max_island_ratios(data):
             max_freq = freq
             max_island = island
 
-    print(f"The most frequently occurring island is {max_island}.")
-
     # makes new list of all penguins' data from that island
     island_data = []
     for penguin in data:
@@ -85,10 +89,10 @@ def calc_max_island_ratios(data):
     # calculate bill length to depth ratio for each species on that island
     bill_ratios = {}
     for species, val in avg_bills.items():
-        ratio = val["avg_bill_length_mm"] / val["avg_bill_depth_mm"]
-        bill_ratios[species] = round(ratio, 2)
+        ratio = round(val["avg_bill_length_mm"] / val["avg_bill_depth_mm"],2)
+        bill_ratios[species] = {"island": max_island, "ratio": ratio}
 
-    return max_island, bill_ratios
+    return bill_ratios
 
 
 # Lilly: find the species with the lowest ratio in 2007
@@ -154,17 +158,29 @@ def calc_fpercent(data):
 
 def main():
     data = load_data("penguins.csv")
-    generate_penguin_report(data)
 
     avg_bills_all = calc_avg_bills(data)
-    print("Average bill lengths and depths for all species:")
+    print("Average bill lengths and depths for all species:\n")
     for species, values in avg_bills_all.items():
         print(f"{species}: length = {values['avg_bill_length_mm']} mm, depth = {values['avg_bill_depth_mm']} mm")
     
-    most_pop_island, bill_ratios = calc_max_island_ratios(data)
-    print(f"The bill length-to-depth ratios for each species on {most_pop_island}:")
+    bill_ratios = calc_max_island_ratios(data)
+
+    print("\nBill length-to-depth ratios for each species in the most frequently occurring island:\n")
     for species, ratio in bill_ratios.items():
-        print(f"{species}: {ratio}")
+        print(f"{species}: {ratio['ratio']}")
+
+    lowest_species, lowest_ratio = lowest_ratio_2007(data)
+    if lowest_species:
+        print(f"\nIn 2007, the species with the lowest bill length-to-depth ratio is {lowest_species} with a ratio of ({lowest_ratio}).")
+    else:
+        print("No species data for 2007.")
+
+    percent_females = calc_fpercent(data)
+    if percent_females is not None:
+        print(f"The percentage of females in species {lowest_species} in 2007 is {percent_females}%")
+    else:
+        print("No female data for 2007 for lowest species ratio.")
 
 
 if __name__ == "__main__":
@@ -172,12 +188,12 @@ if __name__ == "__main__":
 
 
 
-# WRITEOUTPUT FILE
+# WRITE OUTPUT FILE
 def generate_penguin_report(results):
 
     data = load_data('penguins.csv')
     avg_bills_all = calc_avg_bills(data)
-    most_pop_island, bill_ratios = calc_max_island_ratios(data)
+    bill_ratios = calc_max_island_ratios(data)
     lowest_species, lowest_ratio = lowest_ratio_2007(data)
     female_percent = calc_fpercent(data)
 
@@ -198,7 +214,6 @@ def generate_penguin_report(results):
             file.write(f"    - Depth = {values['avg_bill_depth_mm']} mm \n\n")
         
         file.write(f"2. Bill Ratios in the Most Frequently Occurring Island \n")
-        file.write(f"   Island: {most_pop_island}\n")
         for species, ratio in bill_ratios.items():
             file.write(f"    - {species}: Length-to-Depth Ratio = {ratio}\n\n")
         
@@ -208,7 +223,6 @@ def generate_penguin_report(results):
         file.write(f"   - Ratio: {lowest_ratio}\n")
         file.write(f"2. Percentage of Females in {lowest_species} (2007): {female_percent}%\n\n")
 
-    pass
 
 
 
@@ -226,17 +240,17 @@ class TestPenguinFunctions(unittest.TestCase):
     def setUp(self):
         # general
         self.general_sample = [
-            {"species": "Adelie", "island": "Torgersen", "bill_length_mm": "39.1", "bill_depth": "18.7", "flipper_length_mm": "181", "body_mass_g": "3750", "sex": "male", "year": "2007"},
-            {"species": "Adelie", "island": "Torgersen", "bill_length_mm": "39.5", "bill_depth": "17.4", "flipper_length_mm": "186", "body_mass_g": "3800", "sex": "female", "year": "2007"},
-            {"species": "Adelie", "island": "Dream", "bill_length_mm": "40.2", "bill_depth": "17.1", "flipper_length_mm": "193", "body_mass_g": "3400", "sex": "female", "year": "2009"},
-            {"species": "Gentoo", "island": "Biscoe", "bill_length_mm": "46.1", "bill_depth": "13.2", "flipper_length_mm": "211", "body_mass_g": "4500", "sex": "female", "year": "2007"}
+            {"species": "Adelie", "island": "Torgersen", "bill_length_mm": "39.1", "bill_depth_mm": "18.7", "flipper_length_mm": "181", "body_mass_g": "3750", "sex": "male", "year": "2007"},
+            {"species": "Adelie", "island": "Torgersen", "bill_length_mm": "39.5", "bill_depth_mm": "17.4", "flipper_length_mm": "186", "body_mass_g": "3800", "sex": "female", "year": "2007"},
+            {"species": "Adelie", "island": "Dream", "bill_length_mm": "40.2", "bill_depth_mm": "17.1", "flipper_length_mm": "193", "body_mass_g": "3400", "sex": "female", "year": "2009"},
+            {"species": "Gentoo", "island": "Biscoe", "bill_length_mm": "46.1", "bill_depth_mm": "13.2", "flipper_length_mm": "211", "body_mass_g": "4500", "sex": "female", "year": "2007"}
         ]
         
         # edges
         self.edge_sample = [
-            {"species": "Gentoo", "island": "Biscoe", "bill_length_mm": "NA", "bill_depth": "NA", "flipper_length_mm": "NA", "body_mass_g": "NA", "sex": "NA", "year": "2009"},
-            {"species": "Gentoo", "island": "Dream", "bill_length_mm": "46.5", "bill_depth": "17.9", "flipper_length_mm": "192", "body_mass_g": "3500", "sex": "female", "year": "2007"},
-            {"species": "Chinstrap", "island": "Dream", "bill_length_mm": "50", "bill_depth": "19.2", "flipper_length_mm": "196", "body_mass_g": "3900", "sex": "male", "year": "2007"}
+            {"species": "Gentoo", "island": "Biscoe", "bill_length_mm": "NA", "bill_depth_mm": "NA", "flipper_length_mm": "NA", "body_mass_g": "NA", "sex": "NA", "year": "2009"},
+            {"species": "Gentoo", "island": "Dream", "bill_length_mm": "46.5", "bill_depth_mm": "17.9", "flipper_length_mm": "192", "body_mass_g": "3500", "sex": "female", "year": "2007"},
+            {"species": "Chinstrap", "island": "Dream", "bill_length_mm": "50", "bill_depth_mm": "19.2", "flipper_length_mm": "196", "body_mass_g": "3900", "sex": "male", "year": "2007"}
         ]
 
 # ----- calc_avg_bills ----- 
@@ -245,22 +259,22 @@ class TestPenguinFunctions(unittest.TestCase):
     def test_calc_avg_bills_gen_1(self):
         result = calc_avg_bills(self.general_sample)
         expected = {
-            "Adelie": {"avg_bill_length_mm": 39.6, "avg_bill_depth_mm": 17.33},
+            "Adelie": {"avg_bill_length_mm": 39.6, "avg_bill_depth_mm": 17.73},
             "Gentoo": {"avg_bill_length_mm": 46.1, "avg_bill_depth_mm": 13.2}
         }
         self.assertEqual(result, expected)
     
     def test_calc_avg_bills_gen_2(self): # only adelie species
-        data = [self.general_sample[0:2]]
+        data = self.general_sample[0:2]
         result = calc_avg_bills(data)
-        expected = {"Adelie": {"avg_bill_length_mm": 39.6, "avg_bill_depth_mm": 17.33}}
+        expected = {"Adelie": {"avg_bill_length_mm": 39.3, "avg_bill_depth_mm": 18.05}}
         self.assertEqual(result, expected)
     
     # edge
     def test_calc_avg_bills_edge_1(self): # a penguin is missing data
         result = calc_avg_bills(self.edge_sample)
         expected = {
-            "Gentoo": {"avg_bill_length_mm": 23.25, "avg_bill_depth_mm": 8.95},
+            "Gentoo": {"avg_bill_length_mm": 46.5, "avg_bill_depth_mm": 17.9},
             "Chinstrap": {"avg_bill_length_mm": 50, "avg_bill_depth_mm": 19.2}
         }
         self.assertEqual(result, expected)
@@ -275,8 +289,7 @@ class TestPenguinFunctions(unittest.TestCase):
     def test_calc_max_island_ratios_gen_1(self):
         result = calc_max_island_ratios(self.general_sample)
         expected = {
-            "Adelie": {"island": "Torgersen", "ratio": 0.67},
-            "Gentoo": {"island": "Biscoe", "ratio": 1.0}
+            "Adelie": {"island": "Torgersen", "ratio": 2.18}
         }
         self.assertEqual(result, expected)
 
@@ -284,8 +297,7 @@ class TestPenguinFunctions(unittest.TestCase):
         sample = self.general_sample[::-1]
         result = calc_max_island_ratios(sample)
         expected = {
-            "Adelie": {"island": "Torgersen", "ratio": 0.67},
-            "Gentoo": {"island": "Biscoe", "ratio": 1.0}
+            "Adelie": {"island": "Torgersen", "ratio": 2.18}
         }
         self.assertEqual(result, expected)
 
@@ -293,8 +305,8 @@ class TestPenguinFunctions(unittest.TestCase):
     def test_calc_max_island_ratios_edge_1(self):
         result = calc_max_island_ratios(self.edge_sample)
         expected = {
-            "Gentoo": {"island": "Dream", "ratio": 0.5},      # ignores NA row for Biscoe
-            "Chinstrap": {"island": "Dream", "ratio": 1.0}
+            "Gentoo": {"island": "Dream", "ratio": 2.6},      # ignores NA row for Biscoe
+            "Chinstrap": {"island": "Dream", "ratio": 2.6}
         }
         self.assertEqual(result, expected)
 
@@ -310,75 +322,108 @@ class TestPenguinFunctions(unittest.TestCase):
 
 #Finding the species with the lowest bill length to depth ratio in 2007
 
-# test case 1 (general): generally calculate the lowest ratio in 2007
 
-def lowest_ratio_2007(self):
-    sample_data = [
-        {"267", "Gentoo", "Biscoe", 46.2,14.1,2175,	"female", 2009}
-        {"268", "Gentoo", "Biscoe", 55.1,16,230,5850, "male", 2009}
-        {"3", "Adelie",	"Torgersen",	40.3,18,195,3250, "female", 2007}
-        {"4", "Adelie", "Torgersen", NA,NA,NA,NA, NA, 2007}
-        {"5", "Adelie", "Torgersen"	36.7,19.3,193,3450, "female", 2007} 
-    ]
-    result = lowest_ratio_2007(sample_data)
-    self.assertEqual(lowest_ratio_2007(sample_data), 'Biscoe')
+#Unit Test 1 (general) Tests the general ratio with no odd elements:
+    def test_lowest_ratio_2007_1(self):
 
- # test case 2 (general): calculates the lowest ratio if there is no 2007 in the data set
-
-def lowest_ratio_2007(self):
-    sample_data = [
-        {"267", "Gentoo", "Biscoe", 46.2,14.1,2175,	"female", 2009}
-        {"268", "Gentoo", "Biscoe", 55.1,16,230,5850, "male", 2009}
-        {"61", "Adelie", "Biscoe", 35.7,16.9,185,3150, "female"	2008}
-        {"62", "Adelie" "Biscoe" 41.3,21.1,195,4400, "male", 2008}
-        {"63", "Adelie", "Biscoe", 37.6,17,185,3600, "female", 2008}
-    ]
-    result = lowest_ratio_2007(sample_data)
-    self.assertEqual(lowest_ratio_2007(sample_data), 'Biscoe')
-
-
-#Finding the percentage fo female penguins that make up the population of the penguin species with the lowest bill length to depth ratio in 2007
-
-    #Unit test 1 (general): tests to see the percent of females when some of the sex data is incomplete
-    def test_general_1(self):
         data = [
-            {"3", "Adelie", "Torgersen", 40.3,18,195,3250, "female", 2007}
-            {"4", "Adelie", "Torgersen", NA	NA	NA	NA	NA	2007}
-            {"5", "Adelie", "Torgersen", 36.7,19.3,193,3450, "female", 2007}
-            {"6", "Adelie", "Torgersen", 39.3,20.6,190,3650, "male", 2007}
-            {"7",  "Adelie", "Torgersen", 	38.9,17.8,181,3625, "female", 2007}
-            {"8",  "Adelie", "Torgersen	", 9.2,19.6,195,4675, "male", 2007}
-
+            {'species': 'Adelie', 'island': 'Torgersen', 'bill_length_mm': '39.1', 'bill_depth_mm': '18.7', 'flipper_length_mm': '181', 'body_mass_g': '3750', 'sex': 'male', 'year': '2007'},
+            {'species': 'Adelie', 'island': 'Torgersen', 'bill_length_mm': '39.5', 'bill_depth_mm': '17.4', 'flipper_length_mm': '186', 'body_mass_g': '3800', 'sex': 'female', 'year': '2007'},
+            {'species': 'Gentoo', 'island': 'Biscoe',    'bill_length_mm': '46.1', 'bill_depth_mm': '13.2', 'flipper_length_mm': '211', 'body_mass_g': '4500', 'sex': 'female', 'year': '2007'},
+            {'species': 'Gentoo', 'island': 'Biscoe',    'bill_length_mm': '50.0', 'bill_depth_mm': '16.3', 'flipper_length_mm': '230', 'body_mass_g': '5700', 'sex': 'male', 'year': '2007'},
         ]
-        self.assertEqual(calc_fpercent(data), 50.0)
+        
+        species, ratio = lowest_ratio_2007(data)
+        self.assertEqual(species, 'Adelie')
+        self.assertAlmostEqual(ratio, 2.18, places=2)
+
+
+    #Unit Test 2 (general) Tests only from the same species:
+    def test_lowest_ratio_2007_2(self):
     
-    #Unit test 2 (general): tests to see the percent of females when the data is mixed between different species
-    def test_general_2(self):
         data = [
-            {"7",  "Adelie", "Torgersen", 	38.9,17.8,181,3625, "female", 2007}
-            {"8",  "Adelie", "Torgersen	", 9.2,19.6,195,4675, "male", 2007}
-            {"153",  "Gentoo", "Biscoe	", 46.1,13.2,211,4500, "female", 2007}
-            {"154",  "Gentoo", "Biscoe	", 50,16.3,230,5700, "male", 2007}
-
-155	Gentoo	Biscoe	48.7	14.1	210	4450	female	2007
+            {'species': 'Adelie', 'island': 'Torgersen', 'bill_length_mm': '39.1', 'bill_depth_mm': '18.7', 'flipper_length_mm': '181', 'body_mass_g': '3750', 'sex': 'male', 'year': '2007'},
+            {'species': 'Adelie', 'island': 'Torgersen', 'bill_length_mm': '39.5', 'bill_depth_mm': '17.4', 'flipper_length_mm': '186', 'body_mass_g': '3800', 'sex': 'female', 'year': '2007'},
         ]
-        # Chinstrap is only species, females=2, total=4  => 2/4*100=50.0%
+        species, ratio = lowest_ratio_2007(data)
+        self.assertEqual(species, 'Adelie')
+        self.assertAlmostEqual(ratio, 2.18, places=2)
+    
+
+
+    # Unit Test 3 (Edge Case): attempts to calculate if there is no 2007 in the data set
+    def test_lowest_ratio_2007_3(self):
+        data = [
+            {'species': 'Adelie', 'island': 'Torgersen', 'bill_length_mm': '39.1', 'bill_depth_mm': '18.7', 'flipper_length_mm': '181', 'body_mass_g': '3750', 'sex': 'male', 'year': '2008'},
+            {'species': 'Gentoo', 'island': 'Biscoe',    'bill_length_mm': '46.1', 'bill_depth_mm': '13.2', 'flipper_length_mm': '211', 'body_mass_g': '4500', 'sex': 'female', 'year': '2009'},
+        ]
+        species, ratio = lowest_ratio_2007(data)
+        self.assertIsNone(species)
+        self.assertIsNone(ratio)
+
+
+    # Unit Test 4 (Edge Case): attempts to calculate if there are missing part of bill length and depth data
+    def test_lowest_ratio_2007_4(self):
+        data = [
+            {"species": "Adelie", "island": "Torgersen", "bill_length_mm": "NA", "bill_depth_mm": "18.7", "flipper_length_mm": "181", "body_mass_g": "3750", "sex": "male", "year": "2007"},
+            {"species": "Adelie", "island": "Torgersen", "bill_length_mm": "39.1", "bill_depth_mm": "NA", "flipper_length_mm": "186", "body_mass_g": "3800", "sex": "female", "year": "2007"},
+        ]
+        species, ratio = lowest_ratio_2007(data)
+        self.assertIsNone(species)
+        self.assertIsNone(ratio)
+
+
+    #Calculates the fercent of the species from the previous function that is female
+    
+    #Unit Test 1 (general): Tests the percentage of females with some sex data that is neither male nor female
+    def test_calc_fpercent_1(self):
+        data = [
+            {"species": "Adelie", "island": "Torgersen", "bill_length_mm": "40.3", "bill_depth_mm": "18", "flipper_length_mm": "195", "body_mass_g": "3250", "sex": "female", "year": "2007"},
+            {"species": "Adelie", "island": "Torgersen", "bill_length_mm": "NA", "bill_depth_mm": "NA", "flipper_length_mm": "NA", "body_mass_g": "NA", "sex": "NA", "year": "2007"},
+            {"species": "Adelie", "island": "Torgersen", "bill_length_mm": "36.7", "bill_depth_mm": "19.3", "flipper_length_mm": "193", "body_mass_g": "3450", "sex": "female", "year": "2007"},
+            {"species": "Chinstrap", "island": "Dream", "bill_length_mm": "50.2", "bill_depth_mm": "18.8", "flipper_length_mm": "202", "body_mass_g": "3800", "sex": "male", "year": "2009"},
+            {"species": "Chinstrap", "island": "Dream", "bill_length_mm": "50.5", "bill_depth_mm": "19.6", "flipper_length_mm": "201", "body_mass_g": "4050", "sex": "male", "year": "2007"},
+        ]
+        self.assertAlmostEqual(calc_fpercent(data), 100.0, places=2)
+        
+    #Unit Test 2 (general): Tests the percentage of females when there is only one species
+    def test_calc_fpercent_2(self):
+        data = [
+            {"species": "Adelie", "island": "Torgersen", "bill_length_mm": "36.7", "bill_depth_mm": "19.3", "flipper_length_mm": "193", "body_mass_g": "3450", "sex": "female", "year": "2007"},
+            {"species": "Adelie", "island": "Torgersen", "bill_length_mm": "39.3", "bill_depth_mm": "20.6", "flipper_length_mm": "190", "body_mass_g": "3650", "sex": "male", "year": "2007"},
+            {"species": "Adelie", "island": "Torgersen", "bill_length_mm": "38.9", "bill_depth_mm": "17.8", "flipper_length_mm": "181", "body_mass_g": "3625", "sex": "female", "year": "2007"},
+            {"species": "Adelie", "island": "Torgersen", "bill_length_mm": "39.2", "bill_depth_mm": "19.6", "flipper_length_mm": "195", "body_mass_g": "4675", "sex": "male", "year": "2007"},
+        ]
         self.assertEqual(calc_fpercent(data), 50.0)
 
-    # EDGE CASES
-    def test_edge_none_found(self):
-        # No 2007 data
+
+    #Unit Test 3 (edge case): Tests the percentage of females when no data from 2007 is found
+    def test_calc_fpercent_3(self):
         data = [
-            {'species': 'Adelie', 'year': '2008', 'bill_length_mm': '33.1', 'bill_depth_mm': '16.1', 'sex': 'female'},
-            {'species': 'Gentoo', 'year': '2008', 'bill_length_mm': '45.0', 'bill_depth_mm': '14.0', 'sex': 'male'},
+            {"species": "Chinstrap", "island": "Dream", "bill_length_mm": "50.2", "bill_depth_mm": "18.8",
+            "flipper_length_mm": "202", "body_mass_g": "3800", "sex": "male", "year": "2009"},
+            {"species": "Adelie", "island": "Dream", "bill_length_mm": "38.9", "bill_depth_mm": "18.8",
+            "flipper_length_mm": "190", "body_mass_g": "3600", "sex": "female", "year": "2008"},
+            {"species": "Adelie", "island": "Dream", "bill_length_mm": "35.7", "bill_depth_mm": "18",
+            "flipper_length_mm": "202", "body_mass_g": "3550", "sex": "female", "year": "2008"}
         ]
         self.assertIsNone(calc_fpercent(data))
     
-    def test_edge_all_missing_sex(self):
+    #Unit Test 4 (edge case): Tests the percentage of females when there is no data on the sexes of the species
+    def test_calc_fpercent_4(self):
         data = [
-            {'species': 'Adelie', 'year': '2007', 'bill_length_mm': '39', 'bill_depth_mm': '18', 'sex': 'NA'},
-            {'species': 'Adelie', 'year': '2007', 'bill_length_mm': '37', 'bill_depth_mm': '17', 'sex': ''},
-            {'species': 'Adelie', 'year': '2007', 'bill_length_mm': '35', 'bill_depth_mm': '16', 'sex': ' '},
+            {"species": "Adelie", "island": "Torgersen", "bill_length_mm": "40.3", "bill_depth_mm": "18",
+                "flipper_length_mm": "195", "body_mass_g": "3250", "sex": "NA", "year": "2007"}, 
+            {"species": "Adelie", "island": "Torgersen", "bill_length_mm": "NA", "bill_depth_mm": "NA",
+                "flipper_length_mm": "NA", "body_mass_g": "NA", "sex": "NA", "year": "2007"}, 
+            {"species": "Adelie", "island": "Torgersen", "bill_length_mm": "36.7", "bill_depth_mm": "19.3",
+                "flipper_length_mm": "193", "body_mass_g": "3450", "sex": "NA", "year": "2007"}, 
+            {"species": "Chinstrap", "island": "Dream", "bill_length_mm": "50.2", "bill_depth_mm": "18.8",
+                "flipper_length_mm": "202", "body_mass_g": "3800", "sex": "NA", "year": "2009"}, 
+            {"species": "Chinstrap", "island": "Dream", "bill_length_mm": "50.5", "bill_depth_mm": "19.6",
+                "flipper_length_mm": "201", "body_mass_g": "4050", "sex": "NA", "year": "2007"}
         ]
-        # species found, but none have valid sex fields; total = 0
         self.assertEqual(calc_fpercent(data), 0)
+
+if __name__ == '__main__':
+    unittest.main()
