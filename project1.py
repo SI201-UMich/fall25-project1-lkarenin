@@ -8,7 +8,7 @@
 
 # Name: Lillian Joelson
 # Student ID: 70108944
-# Email: 
+# Email: ljoelson@u,ich.edu
 # Collaborators: Karen Lin
 # Lilly's Functions: 
 
@@ -298,25 +298,28 @@ def lowest_ratio_2007(self):
 #Finding the percentage fo female penguins that make up the population of the penguin species with the lowest bill length to depth ratio in 2007
 
 class TestCalcFPercent(unittest.TestCase):
+    #Unit test 1 (general): tests to see the percent of females when some of the sex data is incomplete
     def test_general_1(self):
         data = [
             {"3", "Adelie", "Torgersen", 40.3,18,195,3250, "female", 2007}
             {"4", "Adelie", "Torgersen", NA	NA	NA	NA	NA	2007}
             {"5", "Adelie", "Torgersen", 36.7,19.3,193,3450, "female", 2007}
-            {}
-5	Adelie	Torgersen	36.7	19.3	193	3450	female	2007
-6	Adelie	Torgersen	39.3	20.6	190	3650	male	2007
-7	Adelie	Torgersen	38.9	17.8	181	3625	female	2007
-8	Adelie	Torgersen	39.2	19.6	195	4675	male	2007,
+            {"6", "Adelie", "Torgersen", 39.3,20.6,190,3650, "male", 2007}
+            {"7",  "Adelie", "Torgersen", 	38.9,17.8,181,3625, "female", 2007}
+            {"8",  "Adelie", "Torgersen	", 9.2,19.6,195,4675, "male", 2007}
+
         ]
         self.assertEqual(calc_fpercent(data), 50.0)
-        
+    
+    #Unit test 2 (general): tests to see the percent of females when the data is mixed between different species
     def test_general_2(self):
         data = [
-            {'species': 'Chinstrap', 'year': '2007', 'bill_length_mm': '48.7', 'bill_depth_mm': '17.4', 'sex': 'female'},
-            {'species': 'Chinstrap', 'year': '2007', 'bill_length_mm': '46.5', 'bill_depth_mm': '16.0', 'sex': 'male'},
-            {'species': 'Chinstrap', 'year': '2007', 'bill_length_mm': '46.5', 'bill_depth_mm': '16.0', 'sex': 'female'},
-            {'species': 'Chinstrap', 'year': '2007', 'bill_length_mm': '50.0', 'bill_depth_mm': '18.0', 'sex': 'male'},
+            {"7",  "Adelie", "Torgersen", 	38.9,17.8,181,3625, "female", 2007}
+            {"8",  "Adelie", "Torgersen	", 9.2,19.6,195,4675, "male", 2007}
+            {"153",  "Gentoo", "Biscoe	", 46.1,13.2,211,4500, "female", 2007}
+            {"154",  "Gentoo", "Biscoe	", 50,16.3,230,5700, "male", 2007}
+
+155	Gentoo	Biscoe	48.7	14.1	210	4450	female	2007
         ]
         # Chinstrap is only species, females=2, total=4  => 2/4*100=50.0%
         self.assertEqual(calc_fpercent(data), 50.0)
