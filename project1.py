@@ -154,6 +154,7 @@ def calc_fpercent(data):
 
 def main():
     data = load_data("penguins.csv")
+    generate_penguin_report(data)
 
     avg_bills_all = calc_avg_bills(data)
     print("Average bill lengths and depths for all species:")
@@ -171,8 +172,8 @@ if __name__ == "__main__":
 
 
 
-# OUTPUT FILE
-def generate_report(results):
+# WRITEOUTPUT FILE
+def generate_penguin_report(results):
 
     data = load_data('penguins.csv')
     avg_bills_all = calc_avg_bills(data)
@@ -338,7 +339,6 @@ def lowest_ratio_2007(self):
 
 #Finding the percentage fo female penguins that make up the population of the penguin species with the lowest bill length to depth ratio in 2007
 
-class TestCalcFPercent(unittest.TestCase):
     #Unit test 1 (general): tests to see the percent of females when some of the sex data is incomplete
     def test_general_1(self):
         data = [
