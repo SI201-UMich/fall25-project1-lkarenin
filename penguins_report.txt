@@ -1,0 +1,26 @@
+PROJECT 1 OUTPUT FILE
+Dataset: penguins.csv
+
+Collaborators:
+- Karen Lin (linkaren@umich.edu)
+- Lillian Joelson (ljoelson@umich.edu)
+
+Karen's Calculations:
+1. Average Bill Lengths and Bill Depths of Each Species: 
+   Adelie: 
+    - Length = 38.79 mm 
+    - Depth = 18.35 mm 
+   Gentoo: 
+    - Length = 47.5 mm 
+    - Depth = 14.98 mm 
+   Chinstrap: 
+    - Length = 48.83 mm 
+    - Depth = 18.42 mm 
+2. Bill Ratios in the Most Frequently Occurring Island 
+    - Adelie: Length-to-Depth Ratio = {'island': 'Biscoe', 'ratio': 2.12}
+    - Gentoo: Length-to-Depth Ratio = {'island': 'Biscoe', 'ratio': 3.17}
+Lilly's Calculations:
+1. Species with the Lowest Bill Length-to-Depth Ratio in 2007: Adelie
+   - Ratio: 2.07
+2. Percentage of Females in Adelie (2007): 50.0%
+

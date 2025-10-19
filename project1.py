@@ -153,6 +153,41 @@ def calc_fpercent(data):
     return round(percent, 2)
     
 
+# WRITE OUTPUT FILE
+def generate_penguin_report(results):
+
+    data = load_data('penguins.csv')
+    avg_bills_all = calc_avg_bills(data)
+    bill_ratios = calc_max_island_ratios(data)
+    lowest_species, lowest_ratio = lowest_ratio_2007(data)
+    female_percent = calc_fpercent(data)
+
+    with open('penguins_report.txt', 'w') as file:
+        # intro
+        file.write("PROJECT 1 OUTPUT FILE\n")
+        file.write("Dataset: penguins.csv\n\n")
+        file.write("Collaborators:\n")
+        file.write("- Karen Lin (linkaren@umich.edu)\n")
+        file.write("- Lillian Joelson (ljoelson@umich.edu)\n\n")
+        
+        # karen
+        file.write("Karen's Calculations:\n")
+        file.write(f"1. Average Bill Lengths and Bill Depths of Each Species: \n")
+        for species, values in avg_bills_all.items():
+            file.write(f"   {species}: \n")
+            file.write(f"    - Length = {values['avg_bill_length_mm']} mm \n")
+            file.write(f"    - Depth = {values['avg_bill_depth_mm']} mm \n")
+        
+        file.write(f"2. Bill Ratios in the Most Frequently Occurring Island \n")
+        for species, ratio in bill_ratios.items():
+            file.write(f"    - {species}: Length-to-Depth Ratio = {ratio}\n")
+        
+        # lilly
+        file.write("Lilly's Calculations:\n")
+        file.write(f"1. Species with the Lowest Bill Length-to-Depth Ratio in 2007: {lowest_species}\n")
+        file.write(f"   - Ratio: {lowest_ratio}\n")
+        file.write(f"2. Percentage of Females in {lowest_species} (2007): {female_percent}%\n\n")
+
 
 # MAIN
 
@@ -183,45 +218,20 @@ def main():
         print("No female data for 2007 for lowest species ratio.")
 
 
+    results = {
+    'avg_bills_all': calc_avg_bills,
+    'bill_ratios': calc_max_island_ratios,
+    'lowest_species, lowest_ratio': lowest_ratio_2007,
+    'percent_females': calc_fpercent
+    }
+    generate_penguin_report(results)
+
+    
+
 if __name__ == "__main__":
     main()
 
 
-
-# WRITE OUTPUT FILE
-def generate_penguin_report(results):
-
-    data = load_data('penguins.csv')
-    avg_bills_all = calc_avg_bills(data)
-    bill_ratios = calc_max_island_ratios(data)
-    lowest_species, lowest_ratio = lowest_ratio_2007(data)
-    female_percent = calc_fpercent(data)
-
-    with open('penguins_report.txt', 'w') as file:
-        # intro
-        file.write("PROJECT 1 OUTPUT FILE\n")
-        file.write("Dataset: penguins.csv\n\n")
-        file.write("Collaborators:\n")
-        file.write("- Karen Lin (linkaren@umich.edu)\n")
-        file.write("- Lillian Joelson (ljoelson@umich.edu)\n\n")
-        
-        # karen
-        file.write("Karen's Calculations:\n")
-        file.write(f"1. Average Bill Lengths and Bill Depths of Each Species: \n")
-        for species, values in avg_bills_all.items():
-            file.write(f"   {species}: ")
-            file.write(f"    - Length = {values['avg_bill_length_mm']} mm \n")
-            file.write(f"    - Depth = {values['avg_bill_depth_mm']} mm \n\n")
-        
-        file.write(f"2. Bill Ratios in the Most Frequently Occurring Island \n")
-        for species, ratio in bill_ratios.items():
-            file.write(f"    - {species}: Length-to-Depth Ratio = {ratio}\n\n")
-        
-        # lilly
-        file.write("Lilly's Calculations:\n")
-        file.write(f"1. Species with the Lowest Bill Length-to-Depth Ratio in 2007: {lowest_species}\n")
-        file.write(f"   - Ratio: {lowest_ratio}\n")
-        file.write(f"2. Percentage of Females in {lowest_species} (2007): {female_percent}%\n\n")
 
 
 
